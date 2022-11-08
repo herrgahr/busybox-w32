@@ -11158,10 +11158,23 @@ find_builtin(const char *name)
 }
 
 #if ENABLE_FEATURE_EDITING
+static const char * FAST_FUNC get_alias_name(int i)
+{
+	int j;
+	const struct alias *ap;
+
+	for (j = 0; j < ATABSIZE; j++) {
+		for (ap = atab[j]; ap; ap = ap->next) {
+			if (i-- == 0)
+				return ap->name;
+		}
+	}
+	return NULL;
+}
 static const char * FAST_FUNC
 get_builtin_name(int i)
 {
-	return /*i >= 0 &&*/ i < ARRAY_SIZE(builtintab) ? builtintab[i].name + 1 : NULL;
+	return /*i >= 0 &&*/ i < ARRAY_SIZE(builtintab) ? builtintab[i].name + 1 : get_alias_name(i - ARRAY_SIZE(builtintab));
 }
 #endif
 
